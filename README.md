@@ -34,19 +34,28 @@ Services will be restarted automatically as you save the files.
 
 ### Production environment
 
-1. To deploy, first set your environment: copy `example.env` into `.env`:
+##### config 
+
+To deploy, first set your environment: copy `example.env` into `.env`:
 ```bash
 cp example.env .env
 ```
 Then edit the file to enter your hostname, email. Your api will be accessible from `api.<NGINX_HOSTNAME>` and 
 flower will be running on `flower.<NGINX_HOSTNAME>`
-2. Now point DNS of the domain (api.<domain>, flower.<domain>) to the ip address.
-3. Create Let's Encrypt SSL certificates for domains `api.<your.domain>` and `flower.<your.domain>`
+
+##### dns
+
+Now point DNS of the domain (api.<domain>, flower.<domain>) to the ip address.
+
+##### ssl
+
+Create Let's Encrypt SSL certificates for domains `api.<your.domain>` and `flower.<your.domain>`
 ```bash
-sudo ./init-letsencrypt.sh.
+sudo ./init-letsencrypt.sh
 ```
-(Based on [this post](https://medium.com/@pentacent/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71).) 
 This will create ssl certificates in `./data/certbot/conf/live/`
+
+##### launch
 
 You are ready to launch:
 ```bash
@@ -54,8 +63,16 @@ docker-compose up -d --build
 ```
 
 The api will be available on these URLs:
-* `https://api.you.domain`
-* `https://flower.you.domain`
+* `https://api.your.domain`
+* `https://flower.your.domain`
+
+`./data/client_certs` contains a ca.crt - a sample ssl certificate authority file that will be used to
+authenticate out of the box. Install the client certificate on your browser `user.pfx` to access
+the URLs above. 
+
+#### WARNING
+
+You need to create or re-use your own ca.crt and sign client certificates with it.
 
 ### Scale
 
@@ -76,3 +93,4 @@ adapted from
 * [https://github.com/itsrifat/flask-celery-docker-scale](https://github.com/itsrifat/flask-celery-docker-scale)
 * [https://github.com/mattkohl/docker-flask-celery-redis](https://github.com/mattkohl/docker-flask-celery-redis)
 * [https://github.com/dlesz/docker-flask-celery-redis-hotcode](https://github.com/dlesz/docker-flask-celery-redis-hotcode)
+* [https://medium.com/@pentacent/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71](https://medium.com/@pentacent/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71)
