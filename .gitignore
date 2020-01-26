@@ -112,3 +112,6 @@ tmp
 coverage-reports
 coverage*
 .DS_Store
+
+# Local settings file
+.env

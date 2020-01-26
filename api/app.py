@@ -1,16 +1,18 @@
 from flask import Flask
-from flask import url_for, jsonify
+from flask import url_for
 from worker import celery
 import celery.states as states
+import os
 
-dev_mode = True
 app = Flask(__name__)
-app.config.update(
-    TESTING=dev_mode,
-    DEBUG=dev_mode,
-    USE_RELOADER=dev_mode,
-    THREADED=False
-)
+
+if os.environ.get('DEV_MODE'):
+    app.config.update(
+        TESTING=True,
+        DEBUG=True,
+        USE_RELOADER=True,
+        THREADED=False
+    )
 
 @app.route('/add/<int:param1>/<int:param2>')
 def add(param1: int, param2: int) -> str:
@@ -18,18 +20,18 @@ def add(param1: int, param2: int) -> str:
     response = f"<a href='{url_for('check_task', task_id=task.id, external=True)}'>check status of {task.id} </a>"
     return response
 
-
 @app.route('/check/<string:task_id>')
 def check_task(task_id: str) -> str:
     res = celery.AsyncResult(task_id)
     if res.state == states.PENDING:
         return res.state
     else:
-        return jsonify(res.result)
+        return str(res.result)
 
-@app.route('/health_check')
-def health_check() -> str:
-        return jsonify("OK")
+@app.route('/')
+def index():
+    return "Extend this api with your own endpoints"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5001')
+    app.run(host=os.environ.get('HOST'), port=os.environ.get('PORT'))
+

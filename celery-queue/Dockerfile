@@ -9,8 +9,4 @@ WORKDIR /queue
 
 RUN pip install -r requirements.txt
 
-# production
-#ENTRYPOINT celery -A tasks worker --loglevel=info
-
-# hot code reloading
-ENTRYPOINT watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A tasks worker --concurrency=1 --loglevel=INFO
+ENTRYPOINT celery -A tasks worker --loglevel=info
